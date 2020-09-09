@@ -1,0 +1,5 @@
+#Files to be ignored by Git
+fourvector_real.*
+snippets.cpp
+*.o
+nlo4d.out

@@ -120,7 +120,7 @@ void testScalarTreeAmplitude ()
     std::cout << "4 leg amplitude: " << amplitude4.amplitude (momenta4) << "\n";
 
     ScalarTreeAmplitude amplitude5 (5, coupling);
-    std::cout << "4 leg amplitude: " << amplitude5.amplitude (momenta5) << "\n";
+    std::cout << "5 leg amplitude: " << amplitude5.amplitude (momenta5) << "\n";
 
     ScalarTreeAmplitude amplitude6 (6, coupling);
     std::cout << "6 leg amplitude: " << amplitude6.amplitude (momenta6) << "\n";

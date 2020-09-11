@@ -80,7 +80,8 @@ complex_t ScalarTreeAmplitude::masslessCurrentAmputated
 
 //Amputated massive recursive current
 complex_t ScalarTreeAmplitude::massiveCurrentAmputated
-    (const std::vector <FourVector <real_t>>& momenta)
+    (const std::vector <FourVector <real_t>>& momenta,
+     const std::vector <unsigned int>& idList)
 {
     //n bits to store
     unsigned int n = momenta.size () - 1;
@@ -90,13 +91,16 @@ complex_t ScalarTreeAmplitude::massiveCurrentAmputated
     //Generate all set combinations except the last one via bit representation
     for (unsigned int i = 0; i < pow(2, n) - 1; i++)
     {
-        //Initialize two sets of current momenta
+        //Initialize two sets of current momenta and idList
         std::vector <FourVector <real_t>> currentMomenta1;
         std::vector <FourVector <real_t>> currentMomenta2;
 
+        std::vector <unsigned int> idList1;
+        std::vector <unsigned int> idList2;
+
         //The first set always contains the first element of set 'momenta'
         currentMomenta1.push_back (momenta.at (0));
-
+        idList1.push_back (idList.at (0));
 
         //Read off bits of 'i' and fill current momenta sets accordingly
         for (unsigned int j = 0; j < n; j++)
@@ -107,18 +111,20 @@ complex_t ScalarTreeAmplitude::massiveCurrentAmputated
             if ((i & readoff) == readoff)
             {
                 currentMomenta1.push_back (momenta.at (j + 1));
+                idList1.push_back (idList.at (j + 1));
             }
             //Element is in the second set
             else
             {
                 currentMomenta2.push_back (momenta.at (j + 1));
+                idList2.push_back (idList.at (j + 1));
             }
 
         }
 
         //Momenta generation complete, calculate contribution
-        result += vertex() * massiveCurrent(currentMomenta1)
-                        * massiveCurrent(currentMomenta2);
+        result += vertex() * massiveCurrent(currentMomenta1, idList1)
+                        * massiveCurrent(currentMomenta2, idList2);
     }
 
     return result;
@@ -144,8 +150,6 @@ complex_t ScalarTreeAmplitude::masslessCurrent
             currentID += pow (2,i);
         }
 
-        //std::cout << "currentID: " << currentID << "\n";
-
         //Check if current was already computed
         unsigned int level = momenta.size() - 2;
 
@@ -153,9 +157,6 @@ complex_t ScalarTreeAmplitude::masslessCurrent
         {
             if (i.ID_ == currentID)
             {
-                //std::cout << "Current was already calculated!\n";
-                //std::cout << "Value: " << i.value_ << "\n\n";
-
                 return i.value_;
             }
         }
@@ -163,9 +164,6 @@ complex_t ScalarTreeAmplitude::masslessCurrent
         //Calculate current, store it and return it
         complex_t result = masslessPropagator (sum (momenta))
                          * masslessCurrentAmputated (momenta, idList);
-
-        //std::cout << "Value: " << result << "\n\n";
-
 
         LabeledContainer container_t;
         container_t.ID_ = currentID;
@@ -180,17 +178,47 @@ complex_t ScalarTreeAmplitude::masslessCurrent
 
 //Massive recursive current
 complex_t ScalarTreeAmplitude::massiveCurrent
-    (const std::vector <FourVector <real_t>>& momenta)
+    (const std::vector <FourVector <real_t>>& momenta,
+     const std::vector <unsigned int>& idList)
 {
     //Check if recursion terminates
     if (momenta.size () == 1)
     {
         return 1;
     }
+    //Continue recursion
     else
     {
-        return massivePropagator (sum (momenta))
-               * massiveCurrentAmputated (momenta);
+        //Calculate current ID
+        unsigned int currentID = 0;
+        for (auto i : idList)
+        {
+            currentID += pow (2,i);
+        }
+
+        //Check if current was already computed
+        unsigned int level = momenta.size() - 2;
+
+        for (auto i : currentStorage_ [level])
+        {
+            if (i.ID_ == currentID)
+            {
+                return i.value_;
+            }
+        }
+
+        //Calculate current, store it and return it
+        complex_t result = massivePropagator (sum (momenta))
+                         * massiveCurrentAmputated (momenta, idList);
+
+        LabeledContainer container_t;
+        container_t.ID_ = currentID;
+        container_t.value_ = result;
+
+        currentStorage_ [level].push_back (container_t);
+
+        return result;
+
     }
 }
 
@@ -224,7 +252,7 @@ complex_t ScalarTreeAmplitude::amplitude
         }
         else
         {
-            result = massiveCurrentAmputated (currentMomenta);
+            result = massiveCurrentAmputated (currentMomenta, idList);
         }
 
         //Multiply with overall coupling factor

@@ -33,14 +33,16 @@ private:
         (const std::vector <FourVector <real_t>>& momenta,
          const std::vector <unsigned int>& idList);
     complex_t massiveCurrentAmputated
-        (const std::vector <FourVector <real_t>>& momenta);
+        (const std::vector <FourVector <real_t>>& momenta,
+         const std::vector <unsigned int>& idList);
 
     //Off-shell currents
     complex_t masslessCurrent
         (const std::vector <FourVector <real_t>>& momenta,
          const std::vector <unsigned int>& idList);
     complex_t massiveCurrent
-        (const std::vector <FourVector <real_t>>& momenta);
+        (const std::vector <FourVector <real_t>>& momenta,
+         const std::vector <unsigned int>& idList);
 
     //Feynman-rules
     complex_t vertex ();

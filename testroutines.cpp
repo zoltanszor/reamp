@@ -94,46 +94,52 @@ void testFourVector ()
 
 void testScalarTreeAmplitude ()
 {
-    ScalarTreeAmplitude dummyAmplitude;
-    ScalarTreeAmplitude masslessAmplitude (6, 1);
-    ScalarTreeAmplitude massiveAmplitude (6, 1, 500);
 
-    FourVector <real_t> p1(1, 22, 3, 44);
-    FourVector <real_t> p2(11, 2, 33, 4);
+    FourVector <real_t> p1 (1, 22, 3, 44);
+    FourVector <real_t> p2 (11, 2, 33, 4);
     FourVector <real_t> p3 (-1, 22, -4, 55);
     FourVector <real_t> p4 (-2, 32, -5, 5);
     FourVector <real_t> p5 (8, 11, 21, 7);
     FourVector <real_t> p6 = - p1 - p2 - p3 - p4 - p5;
 
-    std::vector <FourVector <real_t>> momenta = {p1, p2, p3, p4, p5, p6};
-    std::vector <FourVector <real_t>> momentaPermutated = {p3, p4, p5, p6, p1, p2};
 
     std::vector <FourVector <real_t>> momenta3 = {p1, p2, -p1 - p2};
+    std::vector <FourVector <real_t>> momenta4 = {p1, p2, p3, - p1 - p2 - p3};
+    std::vector <FourVector <real_t>> momenta5 = {p1, p2, p3, p4, - p1 - p2 - p3 - p4};
+    std::vector <FourVector <real_t>> momenta6 = {p1, p2, p3, p4, p5, p6};
+    std::vector <FourVector <real_t>> momentaPermutated6 = {p3, p4, p5, p6, p1, p2};
 
     //std::cout << "sum: " << sum (momenta) << "\n";
 
-    ScalarTreeAmplitude amplitude6 (6, 1);
-    std::cout << "6 leg amplitude: " << amplitude6.amplitude (momenta) << "\n";
-    std::cout << "6 leg amplitude (perm): " << amplitude6.amplitude (momentaPermutated) << "\n";
+    real_t coupling = 2.5;
 
-    ScalarTreeAmplitude amplitude6_2 (6, 1, 0);
-    std::cout << "6 leg amplitude (mass): " << amplitude6_2.amplitude (momenta) << "\n";
-
-    ScalarTreeAmplitude amplitude3 (3, 1);
+    ScalarTreeAmplitude amplitude3 (3, coupling);
     std::cout << "3 leg amplitude: " << amplitude3.amplitude (momenta3) << "\n";
 
-    p4 = - p1 - p2 - p3;
-    std::vector <FourVector <real_t>> momenta4 = {p1, p2, p3, p4};
+    ScalarTreeAmplitude amplitude4 (4, coupling);
+    std::cout << "4 leg amplitude: " << amplitude4.amplitude (momenta4) << "\n";
 
-    //If scalar amplitudes would be colour ordered
-    ScalarTreeAmplitude amplitude4 (4, 1);
-    std::cout << "4 leg amplitude: numerical: "
-        << amplitude4.amplitude (momenta4) << "\n";
+    ScalarTreeAmplitude amplitude5 (5, coupling);
+    std::cout << "4 leg amplitude: " << amplitude5.amplitude (momenta5) << "\n";
 
+    ScalarTreeAmplitude amplitude6 (6, coupling);
+    std::cout << "6 leg amplitude: " << amplitude6.amplitude (momenta6) << "\n";
+
+    //Crosscheck with momenta permutation
+    std::cout << "6 leg amplitude (perm): "
+        << amplitude6.amplitude (momentaPermutated6) << "\n";
+
+    //Crosscheck with massive routine without subcurrent storage
+    ScalarTreeAmplitude amplitude6_2 (6, coupling, 0);
+    std::cout << "6 leg amplitude (mass): "
+        << amplitude6_2.amplitude (momenta6) << "\n";
+
+/*
     complex_t analytical;
     analytical = imaginaryUnit * imaginaryUnit
                * (amplitude4.masslessPropagator (p1 + p4)
                + amplitude4.masslessPropagator (p1 + p2)
                + amplitude4.masslessPropagator (p1 + p3));
     std::cout << "4 leg amplitude: analytical: " << analytical << "\n";
+*/
 }

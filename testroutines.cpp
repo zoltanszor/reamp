@@ -1,6 +1,7 @@
 //Testroutines
 #include <array>
 #include <complex>
+#include <ctime>
 
 #include "definitions.h"
 #include "fourvector.h"
@@ -107,6 +108,7 @@ void testScalarTreeAmplitude ()
     std::vector <FourVector <real_t>> momenta4 = {p1, p2, p3, - p1 - p2 - p3};
     std::vector <FourVector <real_t>> momenta5 = {p1, p2, p3, p4, - p1 - p2 - p3 - p4};
     std::vector <FourVector <real_t>> momenta6 = {p1, p2, p3, p4, p5, p6};
+    std::vector <FourVector <real_t>> momenta6Alt = {p6, p2, p5, p3, p4, p1};
     std::vector <FourVector <real_t>> momentaPermutated6 = {p3, p4, p5, p6, p1, p2};
 
     //std::cout << "sum: " << sum (momenta) << "\n";
@@ -124,6 +126,7 @@ void testScalarTreeAmplitude ()
 
     ScalarTreeAmplitude amplitude6 (6, coupling);
     std::cout << "6 leg amplitude: " << amplitude6.amplitude (momenta6) << "\n";
+    std::cout << "6 leg amplitude alt: " << amplitude6.amplitude (momenta6Alt) << "\n";
 
     //Crosscheck with momenta permutation
     std::cout << "6 leg amplitude (perm): "
@@ -133,6 +136,24 @@ void testScalarTreeAmplitude ()
     ScalarTreeAmplitude amplitude6_2 (6, coupling, 0);
     std::cout << "6 leg amplitude (mass): "
         << amplitude6_2.amplitude (momenta6) << "\n";
+
+    unsigned int nPoints = 1e4;
+
+    std::cout << "\nCalculating amplitude in " << nPoints << " points...\n";
+
+    clock_t tStart = clock();
+
+    for (unsigned int i = 0; i < nPoints; i++)
+    {
+        amplitude6.amplitude (momenta6);
+    }
+
+    clock_t tEnd = clock();
+
+    real_t tTotal = (double)(tEnd - tStart)/CLOCKS_PER_SEC;
+
+    std::cout << "Total time taken: " << tTotal << "\n";
+    std::cout << "Avg. time per calculation: " << tTotal/nPoints <<"\n";
 
 /*
     complex_t analytical;

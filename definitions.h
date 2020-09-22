@@ -2,7 +2,8 @@
 #define DEFINITIONS
 
 //Macros
-#define EPS_ABS = 1e-16;
+//Sets accuracy within two float numbers will be considered equal
+#define IS_CLOSE_ACCURACY 1e-16
 
 //Types
 typedef double real_t;
@@ -20,7 +21,7 @@ struct LabeledContainer
 //Test closeness of two float number
 inline bool isClose (real_t a, real_t b)
 {
-    return std::abs (a - b) < EPS_ABS ? true : false;
+    return (std::abs (a - b) < IS_CLOSE_ACCURACY) ? true : false;
 }
 
 //Test closeness of two complex float number

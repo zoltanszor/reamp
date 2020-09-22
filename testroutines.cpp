@@ -7,9 +7,20 @@
 #include "fourvector.h"
 #include "scalaramplitude.h"
 
+void testUtilities ()
+{
+    std::cout << "\n*** Testing Utilities ***\n";
+
+    std::cout << "18.9 == 18.9 : " << isClose (18.9, 18.9) << "\n";
+    std::cout << "18.9 == 18.99 : " << isClose (18.9, 18.99) << "\n";
+    std::cout << "18.9 == - (- 18.9) : " << isClose (18.9, - (- 18.9)) << "\n";
+    std::cout << "18.9 == 1.89e1 : " << isClose (18.9, 1.89e1) << "\n";
+
+}
+
 void testFourVector ()
 {
-    std::cout << "\n*** Testing FourVector functionality ***\n" ;
+    std::cout << "\n*** Testing FourVector functionality ***\n";
 
     //Constructors
     FourVector <real_t> testVec1;

@@ -17,8 +17,9 @@ int main()
     #if LEVEL == 0
         std::cout << "\n*** Testing environment ***\n\n";
 
-        //testFourVector();
-        testScalarTreeAmplitude ();
+        testUtilities ();
+        //testFourVector ();
+        //testScalarTreeAmplitude ();
 
     //Running environment
     #else
